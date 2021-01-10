@@ -1,14 +1,13 @@
 import firebase from "firebase";
 
 const firebaseApp = firebase.initializeApp({
-    apiKey: "AIzaSyApjiD8AKP9P8rkNviMBhJAuVa9YkoqrnE",
-    authDomain: "galactigram.firebaseapp.com",
-    databaseURL: "https://galactigram.firebaseio.com",
-    projectId: "galactigram",
-    storageBucket: "galactigram.appspot.com",
-    messagingSenderId: "369364088359",
-    appId: "1:369364088359:web:198d61f7af780532fe0002",
-    measurementId: "G-FTX3JEX9GX"
+  apiKey: "AIzaSyAmA0UG9yaoktmXL9RkKQFe7DXyUcNBjmE",
+  authDomain: "galactigram2-49bc5.firebaseapp.com",
+  projectId: "galactigram2-49bc5",
+  storageBucket: "galactigram2-49bc5.appspot.com",
+  messagingSenderId: "475611567940",
+  appId: "1:475611567940:web:323e905d10ca428f08a911",
+  measurementId: "G-JKHJ75GN5C"
 });
 
 const db = firebaseApp.firestore();
@@ -17,4 +16,4 @@ const storage = firebase.storage();
 
 export { db, auth, storage };
 
-  // export default debugger;
+  // export default debugger
