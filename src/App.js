@@ -1,13 +1,12 @@
-App.js
-
 import React, { useEffect, useState } from 'react';
 import './App.css';
 import Post from './Post';
-import { db, auth } from './firebase'
+import { db, auth } from "./firebase";
 import { makeStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
 import { Button, Input } from '@material-ui/core';
 import ImageUpload from './ImageUpload';
+import InstagramEmbed from 'react-instagram-embed';
 
 function getModalStyle() {
   const top = 50;
@@ -62,7 +61,7 @@ function App() {
   //UseEffect
   useEffect(() => {
     //This is where the code runs
-    db.collection('posts').onSnapshot(snapshot => {
+    db.collection('posts').orderBy('timestamp', 'desc').onSnapshot(snapshot => {
       //every time a new post is added
       setPosts(snapshot.docs.map(doc => ({
         id: doc.id,
@@ -75,13 +74,13 @@ function App() {
     event.preventDefault();
 
     auth
-    .createUserWithEmailAndPassword(email, password)
-    .then((authUser) => {
+      .createUserWithEmailAndPassword(email, password)
+      .then((authUser) => {
         return authUser.user.updateProfile({
-            displayName: username
+          displayName: username
         })
-    })
-    .catch((error) => alert(error.message));
+      })
+      .catch((error) => alert(error.message));
 
     setOpen(false);
   }
@@ -92,21 +91,14 @@ function App() {
       .signInWithEmailAndPassword(email, password)
       .catch((error) => alert(error.message))
 
-      setOpenSignIn(false);
+    setOpenSignIn(false);
   }
 
-  return ( 
+  return (
     <div className="app">
-        {user?.displayName ? (
-            <ImageUpload username={user.displayName} />
-        ): (
-            <h3>Sorry you need to login to upload</h3>
-        )}
-        <ImageUpload username={user.displayName} />
-
       <Modal
-        open={open}
-        onClose={() => setOpen(false)}
+        open={openSignIn}
+        onClose={() => setOpenSignIn(false)}
       >
         <div style={modalStyle} className={classes.paper}>
           <form className="app_signup">
@@ -180,23 +172,47 @@ function App() {
           src="https://www.instagram.com/static/images/web/mobile_nav_type_logo.png/735145cfe0a4.png"
           alt=""
         />
+        {user ? (
+          <Button onClick={() => auth.signOut()}>Log out</Button>
+        ) : (
+            <div className="app_loginContainer">
+              <Button onClick={() => setOpenSignIn(true)}>Sign in</Button>
+              <Button onClick={() => setOpen(true)}>Sign Up</Button>
+            </div>
+          )}
       </div>
-    {user ? (
-        <Button onClick={() => auth.signOut()}>Log out</Button>
-    ): (
-        <div className="app_loginContainer">
-        <Button onClick={() => setOpenSignIn(true)}>Sign in</Button>
-        <Button onClick={() => setOpen(true)}>Sign Up</Button>
+
+      <div className="app_posts">
+        <div className="app_postsLeft">
+          {
+            posts.map(({ id, post }) => (
+              <Post key={id} postId={id} username={post.username} caption={post.caption} imageUrl={post.imageUrl} />
+            ))
+          }
         </div>
-    )}
+        <div className="app_postsRight">
+          <InstagramEmbed
+            url='https://instagr.am/p/Zw9o4/'
+            maxWidth={320}
+            hideCaption={false}
+            containerTagName='div'
+            protocol=''
+            injectScript
+            onLoading={() => { }}
+            onSuccess={() => { }}
+            onAfterRender={() => { }}
+            onFailure={() => { }}
+          />
+        </div>
 
-      <h1>ALEX CICA</h1>
+      </div>
+      <h1>Galactigram</h1>
 
-      {
-        posts.map(({ id, post }) => (
-          <Post key={id} username={post.username} caption={post.caption} imageUrl={post.imageUrl} />
-        ))
-      }
+      {user?.displayName ? (
+        <ImageUpload username={user.displayName} />
+      ) : (
+          <h3>Sorry you need to login to upload</h3>
+        )}
 
     </div>
   );
